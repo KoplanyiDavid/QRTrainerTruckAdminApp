@@ -48,14 +48,4 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-    /*private fun firebaseInit() {
-        val options = FirebaseOptions.Builder()
-            .setProjectId("qrtrainertruck-adminapp")
-            .setApplicationId("1:221722591872:android:b3964eb554e10b6251dc65")
-            .setApiKey("AIzaSyCfjNCD5kHb-LnB5FZXKPxi1t0lXJQASB4")
-            .build()
-
-        FirebaseApp.initializeApp(this, options, "adminapp")
-    }*/
 }
