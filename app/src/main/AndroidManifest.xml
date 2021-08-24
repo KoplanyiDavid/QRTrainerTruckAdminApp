@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QRTrainerTruckAdminApp">
         <activity
-            android:name=".TraineesActivity"
+            android:name=".popupwindow.PopupWindowActivity"
             android:exported="true" />
         <activity
             android:name=".AddNewTrainingActivity"
