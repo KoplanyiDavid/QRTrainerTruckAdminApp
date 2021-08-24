@@ -26,6 +26,7 @@
         <entry key="app/src/main/res/layout/activity_popup_window.xml" value="0.23802083333333332" />
         <entry key="app/src/main/res/layout/card_trainee.xml" value="0.23435897435897435" />
         <entry key="app/src/main/res/layout/card_training.xml" value="0.23435897435897435" />
+        <entry key="app/src/main/res/layout/fragment_trainer_truck.xml" value="0.23435897435897435" />
         <entry key="app/src/main/res/layout/fragment_trainings.xml" value="0.23802083333333332" />
         <entry key="app/src/main/res/layout/trainee_data_popup_window.xml" value="0.23802083333333332" />
       </map>

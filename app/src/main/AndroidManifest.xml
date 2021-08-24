@@ -9,6 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.QRTrainerTruckAdminApp">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCfjNCD5kHb-LnB5FZXKPxi1t0lXJQASB4" />
         <activity
             android:name=".popupwindow.PopupWindowActivity"
             android:exported="true" />
