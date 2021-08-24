@@ -5,4 +5,5 @@
     <string name="title_truck">TrainerTruck</string>
     <string name="title_forum">Fórum</string>
     <string name="tracking_enabled_notif">Tracking is currently enabled. Tap to cancel.</string>
+    <string name="firebase_path">TrainerTruckLocation</string>
 </resources>
