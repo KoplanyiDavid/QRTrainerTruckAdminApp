@@ -1,5 +1,7 @@
 package com.vicegym.qrtrainertruckadminapp.fragments
 
+import TrackingService
+import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -21,6 +23,22 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.vicegym.qrtrainertruckadminapp.R
 import com.vicegym.qrtrainertruckadminapp.databinding.FragmentTrainerTruckBinding
+import androidx.core.app.ActivityCompat
+
+import android.content.pm.PackageManager
+
+import androidx.core.content.ContextCompat
+
+import android.location.LocationManager
+
+import android.content.Context.LOCATION_SERVICE
+
+import androidx.core.content.ContextCompat.getSystemService
+import android.content.Intent
+
+
+
+
 
 class TrainerTruckFragment : Fragment(), OnMapReadyCallback {
 
@@ -28,6 +46,14 @@ class TrainerTruckFragment : Fragment(), OnMapReadyCallback {
     private lateinit var mapView: MapView
     private lateinit var gMap: GoogleMap
     private var marker: Marker? = null
+
+    companion object {
+        private const val PERMISSION_LOCATION = 101
+
+        @JvmStatic
+        fun newInstance() =
+            TrainerTruckFragment()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,17 +66,71 @@ class TrainerTruckFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         init(savedInstanceState)
+        locationTrackingInit()
+    }
+
+    private fun locationTrackingInit() {
+        //Check whether GPS tracking is enabled//
+
+        //Check whether GPS tracking is enabled//
+        val lm = context?.getSystemService(LOCATION_SERVICE) as LocationManager?
+        if (!lm!!.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            activity?.finish()
+        }
+
+//Check whether this app has access to the location permission//
+        val permission = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+
+//If the location permission has been granted, then start the TrackerService//
+
+
+//If the location permission has been granted, then start the TrackerService//
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            startTrackerService()
+        } else {
+
+//If the app doesn’t currently have access to the user’s location, then request access//
+            ActivityCompat.requestPermissions(
+                requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSION_LOCATION
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>?, grantResults: IntArray) {
+
+//If the permission has been granted...//
+        if (requestCode == PERMISSION_LOCATION && grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+//...then start the GPS tracking service//
+            startTrackerService()
+        } else {
+
+//If the user denies the permission request, then display a toast with some more information//
+            Toast.makeText(
+                requireContext(),
+                "Please enable location services to allow GPS tracking",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun startTrackerService() {
+        context?.startService(Intent(requireContext(), TrackingService::class.java))
+
+//Notify the user that tracking has been enabled//
+        Toast.makeText(requireContext(), "GPS tracking enabled", Toast.LENGTH_SHORT).show()
+
+//Close MainActivity//
+        activity?.finish()
     }
 
     private fun init(savedInstanceState: Bundle?) {
         mapInit(savedInstanceState)
         binding.btnStartLocationTracking.setOnClickListener { }
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance() =
-            TrainerTruckFragment()
     }
 
     override fun onStart() {
