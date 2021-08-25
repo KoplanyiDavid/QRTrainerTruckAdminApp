@@ -60,11 +60,6 @@ class TrainerTruckFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun locationTrackingInit() {
-        val lm = context?.getSystemService(LOCATION_SERVICE) as LocationManager
-        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            activity?.finish()
-        }
-
         val permission = ContextCompat.checkSelfPermission(
             requireContext(),
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -85,13 +80,13 @@ class TrainerTruckFragment : Fragment(), OnMapReadyCallback {
         if (requestCode == PERMISSION_LOCATION && grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
             startTrackerService()
         else
-            Toast.makeText(requireContext(), "Please enable GPS sevices to allow GPS tracking", Toast.LENGTH_SHORT)
+            Toast.makeText(requireContext(), "Engedélyezd a GPS helymeghatározást az app működéséhez!", Toast.LENGTH_SHORT)
                 .show()
     }
 
     private fun startTrackerService() {
         context?.startService(Intent(requireContext(), TrackingService::class.java))
-        Toast.makeText(requireContext(), "GPS tracking enabled", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "GPS helymeghatározás engedélyezve", Toast.LENGTH_SHORT).show()
     }
 
     private fun init(savedInstanceState: Bundle?) {
