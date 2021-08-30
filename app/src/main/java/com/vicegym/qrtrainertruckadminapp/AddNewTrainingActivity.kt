@@ -99,7 +99,8 @@ class AddNewTrainingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetLi
             "trainer" to training.trainer,
             "location" to training.location,
             "date" to training.date,
-            "sorter" to sorter
+            "sorter" to sorter,
+            "trainees" to arrayListOf<String>()
         )
 
         val db = Firebase.firestore
