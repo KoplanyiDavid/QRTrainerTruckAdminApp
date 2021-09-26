@@ -200,12 +200,23 @@ class CreatePostActivity : AppCompatActivity() {
                 .show()
             else -> {
                 try {
+                    binding.btnDailyChallengeSendPost.isClickable = false
+                    loadingAlertDialog()
                     uploadPostWithImage()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
         }
+    }
+
+    private fun loadingAlertDialog() {
+        val dialog = AlertDialog.Builder(this).setTitle("Poszt feltöltése...")
+            .setMessage("A posztod feltöltése folyamatban van, kérlek légy türelemmel, amint befejeződik, én eltűnök...")
+            .create()
+        dialog.setCancelable(false)
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.show()
     }
 
     private fun uploadPostWithImage() {
@@ -230,14 +241,13 @@ class CreatePostActivity : AppCompatActivity() {
                 newImageRef.downloadUrl
             }
             .addOnSuccessListener { downloadUri ->
-                uploadPost("gs://qrtrainertruck.appspot.com/admin/profileimage.jpg", downloadUri.toString())
+                uploadPost(downloadUri.toString())
             }
     }
 
-    private fun uploadPost(profilePicture: String? = null, imageUrl: String? = null) {
+    private fun uploadPost(imageUrl: String? = null) {
         val newPost = Post(
             "admin",
-            profilePicture,
             "Admin",
             binding.etDailyChallengeTime.text.toString(),
             binding.etDailyChallengeDescription.text.toString(),

@@ -13,7 +13,8 @@ import com.vicegym.qrtrainertruckadminapp.data.TrainingData
 import com.vicegym.qrtrainertruckadminapp.databinding.ActivityAddNewTrainingBinding
 import java.util.*
 
-class AddNewTrainingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+class AddNewTrainingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
+    TimePickerDialog.OnTimeSetListener {
 
     private lateinit var binding: ActivityAddNewTrainingBinding
     private lateinit var dateForSorting: String
