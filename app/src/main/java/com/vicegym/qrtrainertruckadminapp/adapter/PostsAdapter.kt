@@ -1,6 +1,7 @@
 package com.vicegym.qrtrainertruckadminapp.adapter
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +30,7 @@ class PostsAdapter(private val context: Context) :
         val tvTime: TextView = binding.tvDailyChallengeTime
         val tvDescription: TextView = binding.tvDailyChallengeDescription
         val imgPost: ImageView = binding.imgPost
+        val card = binding.cardView
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -36,21 +38,65 @@ class PostsAdapter(private val context: Context) :
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val tmpPost = postList[position]
-        Firebase.firestore.collection("users").document(tmpPost.uid!!).get().addOnSuccessListener {
-            Glide.with(context).load(it.data?.get("onlineProfilePictureUri")).into(holder.ivProfilePicture)
-        }
+        Glide.with(context).load(tmpPost.profilePic).into(holder.ivProfilePicture)
         holder.tvAuthor.text = tmpPost.author
         holder.tvTime.text = tmpPost.time
         holder.tvDescription.text = tmpPost.description
         holder.imgPost.rotation = 90f
+        holder.card.setOnClickListener {
+            deletePost(tmpPost.sorter)
+        }
+
         Glide.with(context).load(tmpPost.imageUrl).into(holder.imgPost)
+
         setAnimation(holder.itemView, position)
+    }
+
+    private fun deletePost(sorter: Long?) {
+        if (sorter != null) {
+            val alertDialog = AlertDialog.Builder(context)
+            alertDialog.setMessage("Biztosan törölni szeretnéd a posztot?")
+            alertDialog.setPositiveButton("Törlés") { dialog, _ ->
+                Firebase.firestore.collection("posts").document(sorter.toString()).delete()
+                    .addOnSuccessListener {
+                        dialog.dismiss()
+                        val successDialog = AlertDialog.Builder(context)
+                        successDialog.setMessage("A poszt törlése sikeresen megtörtént!")
+                        successDialog.setPositiveButton("OK") { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        successDialog.create().show()
+                    }
+                    .addOnFailureListener {
+                        dialog.dismiss()
+                        val failureDialog = AlertDialog.Builder(context)
+                        failureDialog.setMessage("A poszt törlése sikertelen volt!")
+                        failureDialog.setPositiveButton("OK") { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        failureDialog.create().show()
+                    }
+            }
+            alertDialog.setNegativeButton("Mégse") { dialog, _ ->
+                dialog.dismiss()
+            }
+            alertDialog.create().show()
+        }
     }
 
     fun addPost(post: Post?) {
         post ?: return
+
         postList += (post)
-        submitList((postList))
+        submitList(postList)
+    }
+
+    fun removePost(post: Post?) {
+        post ?: return
+
+        postList -= (post)
+        submitList(postList)
+
     }
 
     private fun setAnimation(viewToAnimate: View, position: Int) {

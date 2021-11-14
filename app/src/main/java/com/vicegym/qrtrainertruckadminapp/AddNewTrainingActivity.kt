@@ -66,7 +66,7 @@ class AddNewTrainingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetLi
         if (dayOfMonth / 10 == 0) {
             stringDay = "0$dayOfMonth"
         }
-        stringDate = "$stringYear/$stringMonth/$stringDay"
+        stringDate = "$stringYear.$stringMonth.$stringDay"
         dateForSorting = stringYear + stringMonth + stringDay
         showTimePickerDialog()
     }
@@ -86,16 +86,15 @@ class AddNewTrainingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetLi
     }
 
     private fun uploadTrainingData() {
-        val tid = Date().time.toString()
         val title = binding.etTrainingTitle.text.toString()
         val trainer = binding.etTrainingTrainer.text.toString()
         val location = binding.etTrainingLocation.text.toString()
         val date = stringDate
         val sorter = dateForSorting.toLong()
 
-        val training = TrainingData(tid, title, trainer, location, date)
+        val training = TrainingData(title, trainer, location, date, sorter)
         val data = hashMapOf(
-            "id" to training.id,
+            //"id" to training.id,
             "title" to training.title,
             "trainer" to training.trainer,
             "location" to training.location,
@@ -105,8 +104,8 @@ class AddNewTrainingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetLi
         )
 
         val db = Firebase.firestore
-        if (training.id != null) {
-            db.collection("trainings").document(training.id!!)
+        if (training.sorter != null) {
+            db.collection("trainings").document(training.sorter!!.toString())
                 .set(data)
                 .addOnSuccessListener {
                     Toast.makeText(applicationContext, "Feltöltés sikeres", Toast.LENGTH_SHORT).show()

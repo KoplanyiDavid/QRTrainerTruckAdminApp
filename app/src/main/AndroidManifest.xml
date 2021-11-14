@@ -41,12 +41,6 @@
             android:value="AIzaSyCfjNCD5kHb-LnB5FZXKPxi1t0lXJQASB4" />
 
         <activity
-            android:name=".popupwindow.PopupWindowActivity"
-            android:exported="true" />
-        <activity
-            android:name=".CreatePostActivity"
-            android:exported="true" />
-        <activity
             android:name=".AddNewTrainingActivity"
             android:exported="true" />
         <activity

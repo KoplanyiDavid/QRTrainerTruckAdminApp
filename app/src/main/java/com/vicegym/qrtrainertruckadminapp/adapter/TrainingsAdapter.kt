@@ -2,23 +2,21 @@ package com.vicegym.qrtrainertruckadminapp.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.vicegym.qrtrainertruckadminapp.data.TraineeData
 import com.vicegym.qrtrainertruckadminapp.data.TrainingData
+import com.vicegym.qrtrainertruckadminapp.data.UserData
 import com.vicegym.qrtrainertruckadminapp.databinding.CardTrainingBinding
-import com.vicegym.qrtrainertruckadminapp.popupwindow.PopupWindowActivity
 
 
 class TrainingsAdapter(private val context: Context) :
@@ -26,9 +24,8 @@ class TrainingsAdapter(private val context: Context) :
 
     private val db = Firebase.firestore
     private val trainingsList: MutableList<TrainingData> = mutableListOf()
+    private val usersList: MutableList<UserData> = mutableListOf()
     private var lastPosition = -1
-    private var traineesDataArray: ArrayList<TraineeData> = arrayListOf()
-    private var traineesIdArray: List<String>? = null
 
     class TrainingsViewHolder(binding: CardTrainingBinding) : RecyclerView.ViewHolder(binding.root) {
         val tvTrainingType = binding.tvTrainingType
@@ -53,59 +50,75 @@ class TrainingsAdapter(private val context: Context) :
         holder.tvTrainer.text = tmpTraining.trainer
         holder.tvGymPlace.text = tmpTraining.location
         holder.tvDate.text = tmpTraining.date
-        holder.trainingCard.setOnClickListener { getTraineesId(tmpTraining.id!!) }
+        holder.trainingCard.setOnClickListener {
+            buildTrainingAlertDialog(tmpTraining)
+        }
         setAnimation(holder.itemView, position)
     }
 
-    private fun getTraineesId(id: String) {
-        db.collection("trainings").document(id).get().addOnSuccessListener { document ->
-            if (document != null) {
-                traineesIdArray = document.data?.get("trainees") as List<String>?
-                if (!(traineesIdArray.isNullOrEmpty()))
-                    getUserFromId()
-            } else {
-                Log.d("TraineesList", "No such document")
-            }
-        }
-            .addOnFailureListener { exception ->
-                Log.d("TraineesList", "get failed with ", exception)
-            }
-    }
+    private fun buildTrainingAlertDialog(training: TrainingData) {
+        var traineesData = ""
 
-    private fun getUserFromId() {
-        for (id in traineesIdArray!!) {
-            db.collection("users").document(id).get().addOnSuccessListener { document ->
-                if (document != null) {
-                    val traineeData = TraineeData(
-                        document.data?.get("name") as String?,
-                        document.data?.get("mobile") as String?,
-                        document.data?.get("email") as String?,
-                        document.data?.get("rank") as String?
-                    )
-                    if (!(traineesDataArray.contains(traineeData)))
-                        traineesDataArray.add(traineeData)
-
-                    if (traineesDataArray.size == traineesIdArray!!.size)
-                        startTraineesDataPopupWindow()
+        if (training.trainees!!.isNotEmpty()) {
+            for (traineeId in training.trainees!!) {
+                for (u in usersList) {
+                    if (traineeId.contentEquals(u.id)) {
+                        traineesData += "${u.name}\n${u.mobile}\n${u.rank}\n\n"
+                    }
                 }
             }
         }
-    }
 
-    private fun startTraineesDataPopupWindow() {
-        val intent = Intent(context, PopupWindowActivity::class.java)
-        val bundle = Bundle()
-        bundle.putParcelableArrayList("traineeList", traineesDataArray)
-        intent.putExtras(bundle)
-        context.startActivity(intent)
-    }
+        val alertDialog = AlertDialog.Builder(context)
+        alertDialog.setMessage(traineesData)
+        alertDialog.setPositiveButton("Bezár") { dialog, _ ->
+            dialog.dismiss()
+        }
+        alertDialog.setNegativeButton("Óra törlése") { dialog, _ ->
+            db.collection("trainings").document(training.sorter.toString()).delete()
 
+            val data = hashMapOf(
+                "title" to training.title,
+                "trainer" to training.trainer,
+                "date" to training.date,
+                "location" to training.location,
+                "sorter" to training.sorter
+            )
+
+            for (traineeId in training.trainees!!) {
+                for (u in usersList) {
+                    if (u.id.contentEquals(traineeId)) {
+                        db.collection("users").document(u.id!!)
+                            .update("trainings", FieldValue.arrayRemove(data))
+                    }
+                }
+            }
+        }
+        alertDialog.create().show()
+    }
 
     fun addTrainings(training: TrainingData?) {
         training ?: return
 
         trainingsList += (training)
         submitList((trainingsList))
+    }
+
+    fun removeTrainings(training: TrainingData?) {
+        training ?: return
+
+        trainingsList -= (training)
+        submitList(trainingsList)
+    }
+
+    fun addUser(user: UserData?) {
+        user ?: return
+        usersList += (user)
+    }
+
+    fun removeUser(user: UserData?) {
+        user ?: return
+        usersList -= user
     }
 
     private fun setAnimation(viewToAnimate: View, position: Int) {

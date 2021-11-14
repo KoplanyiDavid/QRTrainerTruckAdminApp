@@ -12,7 +12,6 @@ import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.vicegym.qrtrainertruckadminapp.CreatePostActivity
 import com.vicegym.qrtrainertruckadminapp.adapter.PostsAdapter
 import com.vicegym.qrtrainertruckadminapp.databinding.FragmentForumBinding
 
@@ -67,18 +66,10 @@ class ForumFragment : Fragment() {
                             dc.document.data.toString(),
                             Toast.LENGTH_SHORT
                         ).show()
-                        DocumentChange.Type.REMOVED -> Toast.makeText(
-                            requireContext(),
-                            dc.document.data.toString(),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        DocumentChange.Type.REMOVED -> postsAdapter.removePost(dc.document.toObject())
                     }
                 }
             }
-        binding.ivNewPost.setOnClickListener {
-            val createPostIntent = Intent(requireContext(), CreatePostActivity::class.java)
-            startActivityForResult(createPostIntent, createPostReqCode)
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

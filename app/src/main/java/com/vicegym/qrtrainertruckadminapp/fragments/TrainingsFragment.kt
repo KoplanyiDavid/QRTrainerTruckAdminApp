@@ -49,7 +49,7 @@ class TrainingsFragment : Fragment() {
     private fun initTrainingsListener() {
         val db = Firebase.firestore
         db.collection("trainings")
-            .orderBy("date") //TODO: ha date vhogy bugos akkor sorter használata
+            .orderBy("sorter")
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
                     Toast.makeText(requireContext(), e.toString(), Toast.LENGTH_SHORT).show()
@@ -64,11 +64,27 @@ class TrainingsFragment : Fragment() {
                             dc.document.data.toString(),
                             Toast.LENGTH_SHORT
                         ).show()
-                        DocumentChange.Type.REMOVED -> Toast.makeText(
+                        DocumentChange.Type.REMOVED -> trainingsAdapter.removeTrainings(dc.document.toObject())
+                    }
+                }
+            }
+
+        db.collection("users")
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    Toast.makeText(requireContext(), e.toString(), Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
+
+                for (dc in snapshots!!.documentChanges) {
+                    when (dc.type) {
+                        DocumentChange.Type.ADDED -> trainingsAdapter.addUser(dc.document.toObject())
+                        DocumentChange.Type.MODIFIED -> Toast.makeText(
                             requireContext(),
                             dc.document.data.toString(),
                             Toast.LENGTH_SHORT
                         ).show()
+                        DocumentChange.Type.REMOVED -> trainingsAdapter.removeUser(dc.document.toObject())
                     }
                 }
             }
