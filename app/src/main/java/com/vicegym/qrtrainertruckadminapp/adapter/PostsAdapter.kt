@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.vicegym.qrtrainertruckadminapp.data.Post
 import com.vicegym.qrtrainertruckadminapp.databinding.CardPostBinding
 
@@ -38,7 +39,9 @@ class PostsAdapter(private val context: Context) :
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val tmpPost = postList[position]
-        Glide.with(context).load(tmpPost.profilePic).into(holder.ivProfilePicture)
+        Firebase.storage.reference.child("profile_pictures/${tmpPost.authorId}").downloadUrl.addOnSuccessListener {
+            Glide.with(context).load(it).into(holder.ivProfilePicture)
+        }
         holder.tvAuthor.text = tmpPost.author
         holder.tvTime.text = tmpPost.time
         holder.tvDescription.text = tmpPost.description

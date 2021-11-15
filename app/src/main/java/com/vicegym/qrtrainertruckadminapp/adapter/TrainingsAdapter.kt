@@ -78,8 +78,6 @@ class TrainingsAdapter(private val context: Context) :
             db.collection("trainings").document(training.sorter.toString()).delete()
 
             val data = hashMapOf(
-                "title" to training.title,
-                "trainer" to training.trainer,
                 "date" to training.date,
                 "location" to training.location,
                 "sorter" to training.sorter
@@ -93,6 +91,7 @@ class TrainingsAdapter(private val context: Context) :
                     }
                 }
             }
+            dialog.dismiss()
         }
         alertDialog.create().show()
     }

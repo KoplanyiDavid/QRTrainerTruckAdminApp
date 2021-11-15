@@ -1,7 +1,7 @@
 package com.vicegym.qrtrainertruckadminapp.data
 
 data class Post(
-    var uid: String? = null,
+    var authorId: String? = null,
     var author: String? = null,
     var time: String? = null,
     var description: String? = null,
