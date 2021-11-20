@@ -177,6 +177,5 @@ class TrainerTruckFragment : Fragment(), OnMapReadyCallback {
                 .icon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(markerIcon, 80, 60, false)))
         )
         gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(truckLatLng, 16f))
-        Toast.makeText(requireContext(), truckLatLng.toString(), Toast.LENGTH_SHORT).show()
     }
 }

@@ -2,6 +2,8 @@ package com.vicegym.qrtrainertruckadminapp
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.icu.util.GregorianCalendar
+import android.icu.util.LocaleData
 import android.os.Bundle
 import android.widget.DatePicker
 import android.widget.TimePicker
@@ -11,6 +13,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.vicegym.qrtrainertruckadminapp.data.TrainingData
 import com.vicegym.qrtrainertruckadminapp.databinding.ActivityAddNewTrainingBinding
+import java.sql.Time
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.*
 
 class AddNewTrainingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
@@ -57,6 +62,8 @@ class AddNewTrainingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetLi
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+        val formatter = SimpleDateFormat("yyyy.MM.dd(EEEE)", Locale.getDefault())
+        stringDate = formatter.format(GregorianCalendar(year, month, dayOfMonth).time)
         val stringYear = year.toString()
         var stringMonth = (month + 1).toString()
         var stringDay = dayOfMonth.toString()
@@ -66,12 +73,14 @@ class AddNewTrainingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetLi
         if (dayOfMonth / 10 == 0) {
             stringDay = "0$dayOfMonth"
         }
-        stringDate = "$stringYear.$stringMonth.$stringDay"
+        //stringDate = "$stringYear.$stringMonth.$stringDay"
         dateForSorting = stringYear + stringMonth + stringDay
         showTimePickerDialog()
     }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
+        val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+        stringDate += " ${formatter.format(Time(((hourOfDay - 1)* 60 * 60 * 1000 + minute * 60 * 1000).toLong()))}"
         var stringHour = hourOfDay.toString()
         var stringMinute = minute.toString()
         if (hourOfDay / 10 == 0) {
@@ -80,7 +89,7 @@ class AddNewTrainingActivity : AppCompatActivity(), DatePickerDialog.OnDateSetLi
         if (minute / 10 == 0) {
             stringMinute = "0$minute"
         }
-        stringDate += " | $stringHour:$stringMinute"
+        //stringDate += " | $stringHour:$stringMinute"
         dateForSorting += "$stringHour$stringMinute"
         binding.tvDateText.text = stringDate
     }

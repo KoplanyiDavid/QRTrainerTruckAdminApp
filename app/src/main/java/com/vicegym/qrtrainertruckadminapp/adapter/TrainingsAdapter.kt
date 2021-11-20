@@ -63,7 +63,7 @@ class TrainingsAdapter(private val context: Context) :
             for (traineeId in training.trainees!!) {
                 for (u in usersList) {
                     if (traineeId.contentEquals(u.id)) {
-                        traineesData += "${u.name}\n${u.mobile}\n${u.rank}\n\n"
+                        traineesData += "${u.name}\n${u.rank}\n\n"
                     }
                 }
             }

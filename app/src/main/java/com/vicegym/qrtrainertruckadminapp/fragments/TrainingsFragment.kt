@@ -52,18 +52,13 @@ class TrainingsFragment : Fragment() {
             .orderBy("sorter")
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
-                    Toast.makeText(requireContext(), e.toString(), Toast.LENGTH_SHORT).show()
                     return@addSnapshotListener
                 }
 
                 for (dc in snapshots!!.documentChanges) {
                     when (dc.type) {
                         DocumentChange.Type.ADDED -> trainingsAdapter.addTrainings(dc.document.toObject())
-                        DocumentChange.Type.MODIFIED -> Toast.makeText(
-                            requireContext(),
-                            dc.document.data.toString(),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        DocumentChange.Type.MODIFIED -> {}
                         DocumentChange.Type.REMOVED -> trainingsAdapter.removeTrainings(dc.document.toObject())
                     }
                 }
@@ -72,18 +67,13 @@ class TrainingsFragment : Fragment() {
         db.collection("users")
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
-                    Toast.makeText(requireContext(), e.toString(), Toast.LENGTH_SHORT).show()
                     return@addSnapshotListener
                 }
 
                 for (dc in snapshots!!.documentChanges) {
                     when (dc.type) {
                         DocumentChange.Type.ADDED -> trainingsAdapter.addUser(dc.document.toObject())
-                        DocumentChange.Type.MODIFIED -> Toast.makeText(
-                            requireContext(),
-                            dc.document.data.toString(),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        DocumentChange.Type.MODIFIED -> {}
                         DocumentChange.Type.REMOVED -> trainingsAdapter.removeUser(dc.document.toObject())
                     }
                 }
