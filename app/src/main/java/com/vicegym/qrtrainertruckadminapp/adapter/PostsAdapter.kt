@@ -28,7 +28,7 @@ class PostsAdapter(private val context: Context) :
     class PostViewHolder(binding: CardPostBinding) : RecyclerView.ViewHolder(binding.root) {
         val ivProfilePicture = binding.ivPostCardProfilePicture
         val tvAuthor: TextView = binding.tvAuthor
-        val tvTime: TextView = binding.tvDailyChallengeTime
+        val tvTitle: TextView = binding.tvDailyChallengeTime
         val tvDescription: TextView = binding.tvDailyChallengeDescription
         val imgPost: ImageView = binding.imgPost
         val card = binding.cardView
@@ -43,11 +43,11 @@ class PostsAdapter(private val context: Context) :
             Glide.with(context).load(it).into(holder.ivProfilePicture)
         }
         holder.tvAuthor.text = tmpPost.author
-        holder.tvTime.text = tmpPost.time
+        holder.tvTitle.text = tmpPost.title
         holder.tvDescription.text = tmpPost.description
         holder.imgPost.rotation = 90f
         holder.card.setOnClickListener {
-            deletePost(tmpPost.sorter)
+            deletePost(tmpPost.sorter, tmpPost.authorId!!)
         }
 
         Glide.with(context).load(tmpPost.imageUrl).into(holder.imgPost)
@@ -55,11 +55,12 @@ class PostsAdapter(private val context: Context) :
         setAnimation(holder.itemView, position)
     }
 
-    private fun deletePost(sorter: Long?) {
+    private fun deletePost(sorter: Long?, authorId: String) {
         if (sorter != null) {
             val alertDialog = AlertDialog.Builder(context)
             alertDialog.setMessage("Biztosan törölni szeretnéd a posztot?")
             alertDialog.setPositiveButton("Törlés") { dialog, _ ->
+                Firebase.storage.reference.child("postimages/${authorId}_$sorter.jpg").delete()
                 Firebase.firestore.collection("posts").document(sorter.toString()).delete()
                     .addOnSuccessListener {
                         dialog.dismiss()

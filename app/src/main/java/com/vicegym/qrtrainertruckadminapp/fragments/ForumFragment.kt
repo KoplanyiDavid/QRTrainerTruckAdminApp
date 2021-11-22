@@ -61,11 +61,7 @@ class ForumFragment : Fragment() {
                 for (dc in snapshots!!.documentChanges) {
                     when (dc.type) {
                         DocumentChange.Type.ADDED -> postsAdapter.addPost(dc.document.toObject())
-                        DocumentChange.Type.MODIFIED -> Toast.makeText(
-                            requireContext(),
-                            dc.document.data.toString(),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        DocumentChange.Type.MODIFIED -> {}
                         DocumentChange.Type.REMOVED -> postsAdapter.removePost(dc.document.toObject())
                     }
                 }
